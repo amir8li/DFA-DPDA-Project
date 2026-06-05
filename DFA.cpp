@@ -7,13 +7,59 @@ DFA::DFA(){
     num_of_inputs = 0;
     num_of_transitions = 0;
 }
-
 DFA::~DFA(){
     for (Node* q : Qs){
         delete q;
     }
 }
+void DFA::print_unreachable_states(){
+    dfs(start_state);
+    cout << "Unreachable states: ";
+    for (Node* q : Qs){
+        if (!q->reachable_from_start){
+            cout << q->name << " ";
+        }
+    }
+    cout << endl;
+}
+void dfs(Node* q){
+    if (q->reachable_from_start){
+        return;
+    }
+    q->reachable_from_start = true;
+    for (auto &neighbor : q->neighbors){
+        dfs(neighbor.first);
+    }
+}
+bool path_to_final(DFA& dfa, Node* q, vector<Node*>& visited){
+    if (find(dfa.finals.begin(), dfa.finals.end(), q) != dfa.finals.end()){
+        return true;
+    }
+    if (find(visited.begin(), visited.end(), q) != visited.end()){
+        return false;
+    }
 
+    visited.push_back(q);
+    for (auto &neighbor : q->neighbors){
+        if (path_to_final(dfa, neighbor.first, visited)){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool DFA::is_path_to_final(Node* q){
+    vector<Node*> visited;
+    return path_to_final(*this, q, visited);
+}
+void DFA::print_dead_states(){
+    cout << "Dead states: ";
+    for(auto st : Qs){
+        if(!is_path_to_final(st))
+            cout << st->name << " ";
+    }
+    cout << endl;
+}
 Node* find_node(DFA& dfa, const string& name){
     for (Node* q : dfa.Qs){
         if (q->name == name){
@@ -22,7 +68,6 @@ Node* find_node(DFA& dfa, const string& name){
     }
     return nullptr;
 }
-
 void input_Qs(DFA& dfa){
     cout << "States: ";
 
@@ -36,7 +81,6 @@ void input_Qs(DFA& dfa){
         dfa.Qs.push_back(new Node(q));
     }
 }
-
 void input_alphabet(DFA &dfa){
     cout << "Alphabet: ";
 
@@ -50,7 +94,6 @@ void input_alphabet(DFA &dfa){
         dfa.alphabet.push_back(al);
     }
 }
-
 void input_start(DFA &dfa){
     cout << "Start state: ";
 
@@ -64,7 +107,6 @@ void input_start(DFA &dfa){
         // exit(1);
     }
 }
-
 void input_finals(DFA &dfa){
     cout << "Final states: ";
     string line;
@@ -86,7 +128,6 @@ void input_finals(DFA &dfa){
         }
     }
 }
-
 void input_transitions(DFA &dfa){
     cout << "Number of transitions: ";
     cin >> dfa.num_of_transitions;
@@ -140,7 +181,6 @@ void input_tests(DFA& dfa){
         dfa.inputs.push_back(input);
     }
 }
-
 void get_inputs(DFA& dfa){
     input_Qs(dfa);
     input_alphabet(dfa);
@@ -154,13 +194,16 @@ int main(){
     DFA dfa;
     get_inputs(dfa);
 
-    for(Node *q : dfa.Qs){
+    for (Node *q : dfa.Qs){
         cout << q->name << " -> ";
-        for(auto &neighbor : q->neighbors){
+        for (auto &neighbor : q->neighbors){
             cout << neighbor.first->name << "(" << neighbor.second << ") ";
         }
         cout << endl;
     }
+
+    dfa.print_unreachable_states();
+    dfa.print_dead_states();
 
     return 0;
 }
