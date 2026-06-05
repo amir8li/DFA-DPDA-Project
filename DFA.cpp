@@ -60,6 +60,28 @@ void DFA::print_dead_states(){
     }
     cout << endl;
 }
+void DFA::connect_alphabet_to_DEAD(Node* q, string alph){
+    transitions.push_back(Transition(q, this->Dead_state, alph));
+    q->neighbors.push_back(pair(q, alph));
+}
+void DFA::add_DEAD_state(){
+    Node *Dead = new Node("Dead");
+    this->Dead_state = Dead;
+    for(auto q : Qs){
+        for(auto alph : alphabet){
+            bool flag = false;
+            for(auto pr : q->neighbors){
+                if(alph == pr.second){
+                    flag = true;
+                    break;
+                }
+            }
+            if(!flag){
+                connect_alphabet_to_DEAD(q, alph);
+            }
+        }
+    }
+}
 Node* find_node(DFA& dfa, const string& name){
     for (Node* q : dfa.Qs){
         if (q->name == name){
@@ -194,16 +216,22 @@ int main(){
     DFA dfa;
     get_inputs(dfa);
 
-    for (Node *q : dfa.Qs){
-        cout << q->name << " -> ";
-        for (auto &neighbor : q->neighbors){
-            cout << neighbor.first->name << "(" << neighbor.second << ") ";
-        }
-        cout << endl;
-    }
+    // for (Node *q : dfa.Qs){
+    //     cout << q->name << " -> ";
+    //     for (auto &neighbor : q->neighbors){
+    //         cout << neighbor.first->name << "(" << neighbor.second << ") ";
+    //     }
+    //     cout << endl;
+    // }
 
-    dfa.print_unreachable_states();
-    dfa.print_dead_states();
+    // cout << "-----------------------" << endl;
+
+    // dfa.print_unreachable_states();
+    // dfa.print_dead_states();
+    // dfa.add_DEAD_state();
+    // for(auto transition : dfa.transitions){
+    //     cout << transition.origin->name << " " << transition.input_alphabet << " " << transition.dest->name << endl;
+    // }
 
     return 0;
 }

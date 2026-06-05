@@ -42,6 +42,7 @@ class DFA{
 public:
     vector<Node*> Qs;
     Node* start_state;
+    Node* Dead_state;
     vector<string> alphabet;
     vector<Node*> finals;
     vector<Transition> transitions;
@@ -53,4 +54,6 @@ public:
     void print_unreachable_states();
     bool is_path_to_final(Node* q);
     void print_dead_states();
+    void connect_alphabet_to_DEAD(Node* q, string alph);
+    void add_DEAD_state();
 };
