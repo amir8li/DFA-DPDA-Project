@@ -82,6 +82,12 @@ void DFA::add_DEAD_state(){
         }
     }
 }
+void DFA::is_empty(){
+    if(is_path_to_final(this->start_state))
+        cout << "Language of DFA is not empty" << endl;
+    else
+        cout << "Language of DFA is empty" << endl;
+}
 Node* find_node(DFA& dfa, const string& name){
     for (Node* q : dfa.Qs){
         if (q->name == name){
@@ -232,6 +238,7 @@ int main(){
     // for(auto transition : dfa.transitions){
     //     cout << transition.origin->name << " " << transition.input_alphabet << " " << transition.dest->name << endl;
     // }
+    dfa.is_empty();
 
     return 0;
 }

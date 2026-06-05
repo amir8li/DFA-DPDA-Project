@@ -56,4 +56,5 @@ public:
     void print_dead_states();
     void connect_alphabet_to_DEAD(Node* q, string alph);
     void add_DEAD_state();
+    void is_empty();
 };
