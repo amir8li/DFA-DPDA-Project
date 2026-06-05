@@ -1,3 +1,15 @@
-*.exe
 *.o
+*.obj
 *.out
+*.exe
+a.out
+
+DFA
+dfa
+main
+
+build/
+bin/
+obj/
+
+.vscode/
