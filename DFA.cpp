@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <cstdio>
 #include "DFA.hpp"
 using namespace std;
 
@@ -62,7 +63,7 @@ void DFA::print_dead_states(){
 }
 void DFA::connect_alphabet_to_DEAD(Node* q, string alph){
     transitions.push_back(Transition(q, this->Dead_state, alph));
-    q->neighbors.push_back(pair(q, alph));
+    q->neighbors.push_back({this->Dead_state, alph});
 }
 void DFA::add_DEAD_state(){
     Node *Dead = new Node("Dead");
@@ -87,6 +88,70 @@ void DFA::is_empty(){
         cout << "Language of DFA is not empty" << endl;
     else
         cout << "Language of DFA is empty" << endl;
+}
+void write_Dead_output(Node* org, string symbol){
+    cout << "Read '" << symbol << "' -> move from " << org->name << " to DEAD" << endl;
+    cout << "Entered DEAD state." << endl;
+    cout << "Execution halted early." << endl;
+    cout << "Result: Rejected" << endl;
+}
+string DFA::print_transition(Node* org, string symbol){
+    for (auto temp : org->neighbors){
+        if (temp.second == symbol){
+            if (temp.first->name == "Dead"){
+                write_Dead_output(org, symbol);
+                return "Dead";
+            }
+            cout << "Read '" << symbol << "' -> move from " << org->name << " to " << temp.first->name << endl;
+            return temp.first->name;
+        }
+    }
+    return "no-transition";
+}
+void DFA::print_output(){
+    for (string str : inputs){
+        cout << "Input string: " << str << endl;
+        cout << "Start at state: " << start_state->name << endl;
+
+        Node* current = start_state;
+        bool halted = false;
+
+        for (char c : str){
+            string symbol(1, c);
+
+            if (find(alphabet.begin(), alphabet.end(), symbol) == alphabet.end()){
+                cout << "Input string contains symbol outside alphabet." << endl;
+                cout << "Result: Rejected" << endl;
+                halted = true;
+                break;
+            }
+
+            string next = print_transition(current, symbol);
+            if (next == "Dead"){
+                halted = true;
+                break;
+            }
+            if (next == "no-transition"){
+                cout << "No transition defined for symbol '" << symbol << "'." << endl; 
+                cout << "Result: Rejected" << endl;
+                halted = true;
+                break;
+            }
+
+            current = find_node(*this, next);
+        }
+
+        if (!halted){
+            cout << "Halted at state: " << current->name << endl;
+            if (find(finals.begin(), finals.end(), current) != finals.end()){
+                cout << "Result: Accepted" << endl;
+            }
+            else{
+                cout << "Result: Rejected" << endl;
+            }
+        }
+        cout << endl;
+    }
 }
 Node* find_node(DFA& dfa, const string& name){
     for (Node* q : dfa.Qs){
@@ -238,7 +303,8 @@ int main(){
     // for(auto transition : dfa.transitions){
     //     cout << transition.origin->name << " " << transition.input_alphabet << " " << transition.dest->name << endl;
     // }
-    dfa.is_empty();
+    dfa.add_DEAD_state();
+    dfa.print_output();
 
     return 0;
 }

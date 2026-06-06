@@ -16,6 +16,7 @@ void get_inputs(DFA& dfa);
 Node* find_node(DFA& dfa, const string& name);
 void dfs(Node* q);
 bool path_to_final(DFA& dfa, Node* q, vector<Node*>& visited);
+void write_Dead_output(Node* org, string symbol);
 
 class Node{
 public:
@@ -57,4 +58,6 @@ public:
     void connect_alphabet_to_DEAD(Node* q, string alph);
     void add_DEAD_state();
     void is_empty();
+    string print_transition(Node *org, string symbol);
+    void print_output();
 };
