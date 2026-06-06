@@ -4,8 +4,11 @@
 *.exe
 a.out
 
-DFA
-dfa
+/DFA/DFA
+/DPDA/DPDA
+/DFA/dfa
+/DPDA/dpda
+
 main
 
 build/
