@@ -17,7 +17,7 @@ void input_tests(DPDA& dpda);
 void get_inputs(DPDA& dpda);
 Node* find_node(DPDA& dpda, string& name);
 
-class Node {
+class Node{
 public:
     string name;
     vector<pair<Node*, string>> neighbors;
@@ -25,7 +25,7 @@ public:
     Node(string name) { this->name = name; }
 };
 
-class Transition {
+class Transition{
 public:
     Node* origin;
     Node* dest;
@@ -37,7 +37,7 @@ public:
           top_of_stack(top_of_stack), add_to_top(add_to_top) {}
 };
 
-class DPDA {
+class DPDA{
 public:
     vector<Node*> Qs;
     Node* start_state;
